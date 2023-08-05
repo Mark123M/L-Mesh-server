@@ -16,7 +16,7 @@ app.use(cors());
 
 const router = require("./router");
 router.forEach((route) => {
-    app.use(route.path, route.handler);
+    app.use(`/api${route.path}`, route.handler);
 })
 /*
 app.use('/api/users', userRoute);
