@@ -18,10 +18,6 @@ const router = require("./router");
 router.forEach((route) => {
     app.use(`/api${route.path}`, route.handler);
 })
-/*
-app.use('/api/users', userRoute);
-app.use('/api/auth', authRoute)
-app.use('/api/posts', postRoute) */
 
 
 const PORT = process.env.PORT || 3001;
