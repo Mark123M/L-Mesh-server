@@ -1,3 +1,4 @@
 module.exports = [
-    {path: "/lsystem", handler: require("./app/view/routes")},
-]
+  {path: '/lsystems', handler: require('./app/LSystems/view/routes')},
+  {path: '/users', handler: require('./app/Users/view/routes')},
+];

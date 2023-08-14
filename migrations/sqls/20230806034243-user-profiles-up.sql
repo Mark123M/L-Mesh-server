@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS public."Profile"
     username character varying(64) COLLATE pg_catalog."default" NOT NULL,
     password character varying(255) COLLATE pg_catalog."default" NOT NULL,
     isadmin boolean NOT NULL,
-    CONSTRAINT "Profile_pkey" PRIMARY KEY (profile_id)
+    CONSTRAINT "Profile_pkey" PRIMARY KEY (profile_id), 
+    CONSTRAINT "Profile_username_key" UNIQUE (username)
 )
 
 TABLESPACE pg_default;
