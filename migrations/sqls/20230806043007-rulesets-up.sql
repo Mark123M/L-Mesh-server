@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS public."Ruleset"
     condition character varying COLLATE pg_catalog."default" NOT NULL,
     production_id integer NOT NULL,
     CONSTRAINT "Ruleset_pkey" PRIMARY KEY (ruleset_id),
+    CONSTRAINT "Ruleset_condition_production_id_key" UNIQUE (condition, production_id),
     CONSTRAINT production_id FOREIGN KEY (production_id)
         REFERENCES public."Production" (production_id) MATCH SIMPLE
         ON UPDATE NO ACTION
