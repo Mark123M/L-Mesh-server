@@ -1,0 +1,60 @@
+{
+    "axiom": "A(edge,init_wid,[0,80,0],[128,83,51])",
+    "constants": {
+        "num_gens": 6,
+        "delta": 22.5,
+        "edge": 0.4,
+        "init_wid": 0.04,
+        "hr": 0.707,
+        "col_rate": "[0, 15, 0]"
+    },
+    "productions": {
+        "A(len,wid,lcol,bcol)": [
+            {
+                "condition": "*",
+                "ruleset": [
+                    {
+                        "rule": "[ &(delta) !(wid) '(bcol) F(len,lcol) '(lcol) L A(len,wid*hr,lcol+col_rate,bcol+col_rate) ] /(delta) /(delta) /(delta) /(delta) /(delta) [ &(delta) !(wid) '(bcol) F(len,lcol) '(lcol) L A(len,wid*hr,lcol+col_rate,bcol+col_rate) ] /(delta) /(delta) /(delta) /(delta) /(delta) /(delta) /(delta) [ &(delta) !(wid) '(bcol) F(len,lcol) '(lcol) L A(len,wid*hr,lcol+col_rate,bcol+col_rate) ]",
+                        "prob": "1.0"
+                    }
+                ]
+            }
+        ],
+        "F(len,lcol)": [
+            {
+                "condition": "*",
+                "ruleset": [
+                    {
+                        "rule": "S(lcol) /(delta) /(delta) /(delta) /(delta) /(delta) F(len,lcol)",
+                        "prob": "1.0"
+                    }
+                ]
+            }
+        ],
+        "S(lcol)": [
+            {
+                "condition": "*",
+                "ruleset": [
+                    {
+                        "rule": "F(edge,lcol) '(lcol) L",
+                        "prob": "1.0"
+                    }
+                ]
+            }
+        ],
+        "L": [
+            {
+                "condition": "*",
+                "ruleset": [
+                    {
+                        "rule": "[ ^(delta) ^(delta) { . -(delta) f(edge) . +(delta) f(edge) . +(delta) f(edge) . -(delta) | -(delta) f(edge) . +(delta) f(edge) . +(delta) f(edge) } ]",
+                        "prob": "1.0"
+                    }
+                ]
+            }
+        ]
+    },
+    "imports": {
+        "sakura": "sakura.glb"
+    }
+}
