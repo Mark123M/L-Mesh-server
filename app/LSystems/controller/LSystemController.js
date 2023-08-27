@@ -43,7 +43,7 @@ const createRuleset = async (data, production_id, client) => {
 
 const createRule = async (data, ruleset_id, client) => {
   try {
-    const newRule = await client.query(`
+    await client.query(`
       INSERT INTO public."Rule"(prob, rule, ruleset_id)
       VALUES($1, $2, $3);`,
     [data.prob, data.rule, ruleset_id]);
@@ -54,9 +54,9 @@ const createRule = async (data, ruleset_id, client) => {
 
 const createConstant = async (name, val, lsystem_id, client) => {
   try {
-    const constant = await client.query(`
-    INSERT INTO public."Constant"(name, value, lsystem_id)
-    VALUES($1, $2, $3);`,
+    await client.query(`
+      INSERT INTO public."Constant"(name, value, lsystem_id)
+      VALUES($1, $2, $3);`,
     [name, val, lsystem_id]);
   } catch (err) {
     throw err;
@@ -65,9 +65,9 @@ const createConstant = async (name, val, lsystem_id, client) => {
 
 const createImport = async (name, val, lsystem_id, client) => {
   try {
-    const i = await client.query(`
-    INSERT INTO public."Import"(symbol, file, lsystem_id)
-    VALUES($1, $2, $3);`,
+    await client.query(`
+      INSERT INTO public."Import"(symbol, file, lsystem_id)
+      VALUES($1, $2, $3);`,
     [name, val, lsystem_id]);
   } catch (err) {
     throw err;
@@ -76,22 +76,11 @@ const createImport = async (name, val, lsystem_id, client) => {
 
 const deleteLSystem = async (id) => {
   try {
-    const LSystem = await pool.query(`
+    await pool.query(`
       DELETE FROM public."LSystem" l
       WHERE l.lsystem_id = $1`,
     [id]);
     // deleteProduction(id);
-  } catch (err) {
-    throw err;
-  }
-};
-
-const deleteProduction = async (id, client) => {
-  try {
-    const production = await client.query(`
-      DELETE FROM public."Production" p
-      WHERE p.lsystem_id = $1`,
-    [id]);
   } catch (err) {
     throw err;
   }
