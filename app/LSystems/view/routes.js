@@ -5,5 +5,6 @@ const auth = require('../../../middleware/auth');
 
 router.get('/', auth, LSystemController.index);
 router.post('/', auth, LSystemController.createLSystem);
+router.put('/:id', auth, LSystemController.updateLSystem);
 router.delete('/:id', auth, LSystemController.deleteLSystem);
 module.exports = router;
