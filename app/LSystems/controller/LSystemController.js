@@ -87,11 +87,17 @@ const deleteLSystem = async (id) => {
 };
 
 module.exports = {
-  index: async (req, res) => {
-    res.status(200).json('Hello from l system controller');
-  },
-  init: async (req, res) => {
-    res.status(200).json('Initializing tables');
+  getAll: async (req, res) => {
+    try {
+      const allLSystem = await pool.query(`
+        SELECT * FROM public."LSystem" l
+        WHERE l.profile_id = $1
+        ORDER BY l.lsystem_id ASC;`,
+      [req.user.profile_id]);
+      res.status(200).json(allLSystem.rows);
+    } catch (err) {
+      res.status(200).json(err);
+    }
   },
   createLSystem: async (req, res) => {
     const client = await pool.connect();
