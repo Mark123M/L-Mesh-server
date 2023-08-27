@@ -28,10 +28,10 @@ const createRuleset = async (data, production_id, client) => {
       INSERT INTO public."Ruleset"(condition, production_id)
       VALUES($1, $2)
       RETURNING ruleset_id;`,
-    [data.condition, production_id]);
+    [data[0], production_id]);
 
     const rulePromises = [];
-    data.ruleset.forEach((r) => {
+    data[1].forEach((r) => {
       const promise = createRule(r, newRuleset.rows[0].ruleset_id, client);
       rulePromises.push(promise);
     });
@@ -44,9 +44,9 @@ const createRuleset = async (data, production_id, client) => {
 const createRule = async (data, ruleset_id, client) => {
   try {
     await client.query(`
-      INSERT INTO public."Rule"(prob, rule, ruleset_id)
+      INSERT INTO public."Rule"(rule, prob, ruleset_id)
       VALUES($1, $2, $3);`,
-    [data.prob, data.rule, ruleset_id]);
+    [data[0], data[1], ruleset_id]);
   } catch (err) {
     throw err;
   }
@@ -104,28 +104,27 @@ module.exports = {
           [req.body.name, req.body.axiom, req.user.profile_id]);
 
       const productionPromises = [];
-      // eslint-disable-next-line guard-for-in
-      for (const symbol in req.body.productions) {
-        const promise = createProduction(symbol, req.body.productions[symbol],
+      req.body.productions.forEach((p) => {
+        const promise = createProduction(p[0], p[1],
             newLSystem.rows[0].lsystem_id, client);
         productionPromises.push(promise);
-      }
+      });
       await Promise.all(productionPromises);
 
       const constantPromises = [];
-      for (const c in req.body.constants) {
-        const promise = createConstant(c, req.body.constants[c],
+      req.body.constants.forEach((c) => {
+        const promise = createConstant(c[0], c[1],
             newLSystem.rows[0].lsystem_id, client);
         constantPromises.push(promise);
-      }
+      });
       await Promise.all(constantPromises);
 
       const importPromises = [];
-      for (const i in req.body.imports) {
-        const promise = createImport(i, req.body.imports[i],
+      req.body.imports.forEach((i) => {
+        const promise = createImport(i[0], i[1],
             newLSystem.rows[0].lsystem_id, client);
         importPromises.push(promise);
-      }
+      });
       await Promise.all(importPromises);
       await client.query('COMMIT;');
       res.status(200).json(newLSystem);
@@ -164,28 +163,27 @@ module.exports = {
       [req.params.id]);
 
       const productionPromises = [];
-      // eslint-disable-next-line guard-for-in
-      for (const symbol in req.body.productions) {
-        const promise = createProduction(symbol, req.body.productions[symbol],
+      req.body.productions.forEach((p) => {
+        const promise = createProduction(p[0], p[1],
             req.params.id, client);
         productionPromises.push(promise);
-      }
+      });
       await Promise.all(productionPromises);
 
       const constantPromises = [];
-      for (const c in req.body.constants) {
-        const promise = createConstant(c, req.body.constants[c],
+      req.body.constants.forEach((c) => {
+        const promise = createConstant(c[0], c[1],
             req.params.id, client);
         constantPromises.push(promise);
-      }
+      });
       await Promise.all(constantPromises);
 
       const importPromises = [];
-      for (const i in req.body.imports) {
-        const promise = createImport(i, req.body.imports[i],
+      req.body.imports.forEach((i) => {
+        const promise = createImport(i[0], i[1],
             req.params.id, client);
         importPromises.push(promise);
-      }
+      });
       await Promise.all(importPromises);
       await client.query('COMMIT;');
       res.status(200).json(newLSystem);
