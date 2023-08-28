@@ -29,6 +29,10 @@ module.exports = {
           WHERE p.username = $1`,
           [username],
       );
+      if (data.rows.length == 0) {
+        res.status(401).json('Invalid login');
+        return;
+      }
       const user = data.rows[0];
       if (password == user.password) {
         const token = jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '1h'});
