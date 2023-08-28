@@ -86,12 +86,141 @@ const deleteLSystem = async (id) => {
   }
 };
 
+
+const getLSystem = async (data) => {
+  try {
+    const allProductions = await pool.query(`
+        SELECT * FROM public."Production" p
+        WHERE p.lsystem_id = $1
+        ORDER BY p.production_id ASC;`,
+    [data.lsystem_id]);
+
+    const allConstants = await pool.query(`
+        SELECT * FROM public."Constant" c
+        WHERE c.lsystem_id = $1
+        ORDER BY c.constant_id ASC;`,
+    [data.lsystem_id]);
+
+    const allImports = await pool.query(`
+        SELECT * FROM public."Import" i
+        WHERE i.lsystem_id = $1
+        ORDER BY i.import_id ASC;`,
+    [data.lsystem_id]);
+
+    const productionPromises = [];
+    allProductions.rows.forEach((p) => {
+      const promise = getProduction(p);
+      productionPromises.push(promise);
+    });
+    const allProductionsJSON = await Promise.all(productionPromises);
+
+    const constantPromises = [];
+    allConstants.rows.forEach((c) => {
+      const promise = getConstant(c);
+      constantPromises.push(promise);
+    });
+    const allConstantsJSON = await Promise.all(constantPromises);
+
+    const importPromises = [];
+    allImports.rows.forEach((i) => {
+      const promise = getImport(i);
+      importPromises.push(promise);
+    });
+    const allImportsJSON = await Promise.all(importPromises);
+
+    // TODO, retrive all constants and imports as well
+    return {name: data.name, axiom: data.axiom, constants: allConstantsJSON,
+      productions: allProductionsJSON, imports: allImportsJSON};
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getProduction = async (data) => {
+  try {
+    const allRulesets = await pool.query(`
+        SELECT * FROM public."Ruleset" rs
+        WHERE rs.production_id = $1
+        ORDER BY rs.ruleset_id ASC;`,
+    [data.production_id]);
+
+    const rulesetPromises = [];
+    allRulesets.rows.forEach((rs) => {
+      const promise = getRuleset(rs);
+      rulesetPromises.push(promise);
+    });
+    const allRulesetsJSON = await Promise.all(rulesetPromises);
+
+    return [data.symbol, allRulesetsJSON];
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getRuleset = async (data) => {
+  try {
+    const allRules = await pool.query(`
+        SELECT * FROM public."Rule" r
+        WHERE r.ruleset_id = $1
+        ORDER BY r.rule_id ASC;`,
+    [data.ruleset_id]);
+
+    const rulePromises = [];
+    allRules.rows.forEach((r) => {
+      const promise = getRule(r);
+      rulePromises.push(promise);
+    });
+    const allRulesJSON = await Promise.all(rulePromises);
+    return [data.condition, allRulesJSON];
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getRule = async (data) => {
+  try {
+    return [data.rule, data.prob];
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getConstant = async (data) => {
+  try {
+    return [data.name, data.value];
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getImport = async (data) => {
+  try {
+    return [data.symbol, data.file];
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
-  index: async (req, res) => {
-    res.status(200).json('Hello from l system controller');
-  },
-  init: async (req, res) => {
-    res.status(200).json('Initializing tables');
+  getAll: async (req, res) => {
+    try {
+      const allLSystems = await pool.query(`
+        SELECT * FROM public."LSystem" l
+        WHERE l.profile_id = $1
+        ORDER BY l.lsystem_id ASC;`,
+      [req.user.profile_id]);
+
+      const lsystemPromises = [];
+      allLSystems.rows.forEach((l) => {
+        const promise = getLSystem(l);
+        lsystemPromises.push(promise);
+      });
+      const allLSystemsJSON = await Promise.all(lsystemPromises);
+
+      res.status(200).json(allLSystemsJSON);
+    } catch (err) {
+      res.status(200).json(err);
+    }
   },
   createLSystem: async (req, res) => {
     const client = await pool.connect();
