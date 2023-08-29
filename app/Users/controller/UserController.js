@@ -7,11 +7,11 @@ module.exports = {
   },
   createUser: async (req, res) => {
     try {
-      const {username, password, isadmin} = req.body;
+      const {username, password} = req.body;
       const newUser = await pool.query(
           `INSERT INTO public."Profile"(username, password, isadmin) 
-          VALUES ($1, $2, $3);`,
-          [username, password, isadmin],
+          VALUES ($1, $2, FALSE);`,
+          [username, password],
       );
       res.status(200).json(newUser);
     } catch (err) {
