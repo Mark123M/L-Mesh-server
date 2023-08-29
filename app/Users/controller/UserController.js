@@ -45,4 +45,12 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+  logout: async (req, res) => {
+    try {
+      res.clearCookie('token', {httpOnly: true});
+      res.status(200).json('Logout successful');
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
 };
