@@ -3,18 +3,15 @@ const pool = require('../../../db');
 
 module.exports = {
   index: async (req, res) => {
-    res.status(200).json('Hello from users endpoint');
-  },
-  init: async (req, res) => {
-    res.status(200).json('Initializing tables');
+    res.status(200).json(res.locals.cookie.token);
   },
   createUser: async (req, res) => {
     try {
-      const {username, password, isadmin} = req.body;
+      const {username, password} = req.body;
       const newUser = await pool.query(
           `INSERT INTO public."Profile"(username, password, isadmin) 
-          VALUES ($1, $2, $3);`,
-          [username, password, isadmin],
+          VALUES ($1, $2, FALSE);`,
+          [username, password],
       );
       res.status(200).json(newUser);
     } catch (err) {
@@ -41,6 +38,14 @@ module.exports = {
       } else {
         res.status(401).json('Invalid login');
       }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  logout: async (req, res) => {
+    try {
+      res.clearCookie('token', {httpOnly: true});
+      res.status(200).json('Logout successful');
     } catch (err) {
       res.status(500).json(err);
     }
