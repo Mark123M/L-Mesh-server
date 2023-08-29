@@ -3,10 +3,7 @@ const pool = require('../../../db');
 
 module.exports = {
   index: async (req, res) => {
-    res.status(200).json('Hello from users endpoint');
-  },
-  init: async (req, res) => {
-    res.status(200).json('Initializing tables');
+    res.status(200).json(res.locals.cookie.token);
   },
   createUser: async (req, res) => {
     try {
