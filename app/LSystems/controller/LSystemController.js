@@ -269,6 +269,17 @@ module.exports = {
     // if creation fails, previous version is rolled back
     const client = await pool.connect();
     try {
+      const lsystem = await pool.query(`
+        SELECT * FROM public."LSystem"
+        WHERE lsystem_id = $1;`,
+      [req.params.id]);
+
+      if (lsystem.rows[0] &&
+        lsystem.rows[0].profile_id != req.user.profile_id ) {
+        res.status(401).json('LSystem does not belong to current user.');
+        return;
+      }
+
       await client.query('BEGIN;');
       const newLSystem = await client.query(`
       UPDATE public."LSystem"
@@ -324,7 +335,21 @@ module.exports = {
     }
   },
   deleteLSystem: async (req, res) => {
-    deleteLSystem(req.params.id);
-    res.status(200).json(`Deleted LSystem.`);
+    try {
+      const lsystem = await pool.query(`
+        SELECT * FROM public."LSystem"
+        WHERE lsystem_id = $1;`,
+      [req.params.id]);
+
+      if (lsystem.rows[0] &&
+      lsystem.rows[0].profile_id != req.user.profile_id ) {
+        res.status(401).json('LSystem does not belong to current user.');
+        return;
+      }
+      deleteLSystem(req.params.id);
+      res.status(200).json(`Deleted LSystem.`);
+    } catch (err) {
+      res.status(500).json(err);
+    }
   },
 };
