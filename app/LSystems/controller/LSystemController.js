@@ -129,8 +129,9 @@ const getLSystem = async (data) => {
     const allImportsJSON = await Promise.all(importPromises);
 
     // TODO, retrive all constants and imports as well
-    return {name: data.name, axiom: data.axiom, constants: allConstantsJSON,
-      productions: allProductionsJSON, imports: allImportsJSON};
+    return {lsystem_id: data.lsystem_id, name: data.name, axiom: data.axiom,
+      constants: allConstantsJSON, productions: allProductionsJSON,
+      imports: allImportsJSON};
   } catch (err) {
     throw err;
   }
@@ -259,6 +260,7 @@ module.exports = {
       res.status(200).json(newLSystem);
     } catch (err) {
       await client.query('ROLLBACK;');
+      console.log(err);
       res.status(200).json(err);
     } finally {
       client.release();
@@ -328,6 +330,7 @@ module.exports = {
       await client.query('COMMIT;');
       res.status(200).json(newLSystem);
     } catch (err) {
+      console.log(err);
       await client.query('ROLLBACK;');
       res.status(200).json(err);
     } finally {
