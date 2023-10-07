@@ -27,9 +27,11 @@
     "jsonwebtoken": "^9.0.1",
     "morgan": "^1.10.0",
     "nodemon": "^3.0.1",
-    "pg": "^8.11.2"
+    "pg": "^8.11.2",
+    "pg-connection-string": "^2.6.2"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.4.10",
     "eslint": "^8.47.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-standard": "^17.1.0",

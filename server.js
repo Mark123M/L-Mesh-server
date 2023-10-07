@@ -30,7 +30,7 @@ router.forEach((route) => {
 });
 
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001; // match fly proxy
 app.listen(PORT, ()=>{
   console.log(`Server running on port ${PORT}`);
 });
