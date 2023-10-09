@@ -33,7 +33,8 @@ module.exports = {
       const user = data.rows[0];
       if (password == user.password) {
         const token = jwt.sign(user, process.env.JWT_SECRET, {expiresIn: '1h'});
-        res.cookie('token', token, {httpOnly: true});
+        res.cookie('token', token, {secure: true, sameSite: 'none',
+          httpOnly: true});
         res.status(200).json({token: token});
       } else {
         res.status(401).json('Invalid login');
@@ -44,7 +45,8 @@ module.exports = {
   },
   logout: async (req, res) => {
     try {
-      res.clearCookie('token', {httpOnly: true});
+      res.clearCookie('token', {secure: true, sameSite: 'none',
+        httpOnly: true});
       res.status(200).json('Logout successful');
     } catch (err) {
       res.status(500).json(err);

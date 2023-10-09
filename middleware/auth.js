@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    res.clearCookie('token');
+    res.clearCookie('token', {secure: true, sameSite: 'none', httpOnly: true});
     res.status(403).json('Unauthorized');
   };
 };
